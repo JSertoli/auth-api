@@ -3,11 +3,21 @@ import { userProps } from "./models";
 
 export class UserService {
 
-    registerUser({ email, password }: userProps) {
+    async registerUser({ email, password }: userProps) {
 
+        sql`SELECT * FROM users WHERE email = ${email};`.then((res) => {
+            if (res.length === 0) {
+                return sql`
+                INSERT INTO users (email, password) VALUES (${email}, ${password});
+            `;
+            }
+        });
+
+    }
+
+    login({ email, password }: userProps) {
         return sql`
-            INSERT INTO users(email, password)
-            VALUES(${email}, ${password})
+        SELECT * FROM users WHERE email = ${email} AND password = ${password};
         `;
     }
 }
